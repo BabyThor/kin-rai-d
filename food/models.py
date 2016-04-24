@@ -2,36 +2,30 @@ from __future__ import unicode_literals
 
 from django.db import models
 
-class Type(models.Model):
+class Tag(models.Model):
+	tag_type_choices = (
+		('style', 'Style'),
+		('location', 'Location')
+	)
 	name = models.CharField(max_length=200)
+	tag_type = models.CharField(max_length=200, choices=tag_type_choices)
 
 	def __unicode__(self):
-		return self.name
-
-class Style(models.Model):
-	name = models.CharField(max_length=200)
-
-	def __unicode__(self):
-		return self.name
-
-class Location(models.Model):
-	name = models.CharField(max_length=200)
-
-	def __unicode__(self):
-		return self.name
+		return '%s : %s' % (self.name, self.tag_type)
 
 class Restaurant(models.Model):
 	name = models.CharField(max_length=200)
-	food_type = models.ForeignKey(Type)
-	food_style = models.ForeignKey(Style)
-	location = models.ForeignKey(Location)
+	tags = models.ManyToManyField('food.Tag')
+	latitude = models.FloatField(null=True, blank=True)
+	longitude = models.FloatField(null=True, blank=True)
 
 	def __unicode__(self):
 		return self.name
 
 class Menu(models.Model):
 	name = models.CharField(max_length=200)
-	restaurant = models.ForeignKey(Restaurant)
+	restaurant = models.ForeignKey('food.Restaurant')
+	price = models.IntegerField()
 
 	def __unicode__(self):
 		return self.name
